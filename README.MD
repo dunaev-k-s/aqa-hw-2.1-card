@@ -1,0 +1,1 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/u82bvj0jysy0x8c7?svg=true)](https://ci.appveyor.com/project/dunaev-k-s/aqa-hw-2-1-card)
