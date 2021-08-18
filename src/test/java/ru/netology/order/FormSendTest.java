@@ -2,6 +2,7 @@ package ru.netology.order;
 
 
 import com.codeborne.selenide.SelenideElement;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
@@ -10,10 +11,14 @@ import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Selenide.*;
 
 public class FormSendTest {
-    @Test
-    void shouldNotSendASCII(){
+
+    @BeforeEach
+    void setUp(){
         open("http://localhost:9999");
-        SelenideElement form =$("div[class=App_appContainer__3jRx1]");
+    }
+    @Test
+    void shouldNotValidateNonRussianName(){
+        SelenideElement form =$("#root");
         form.$("[type=text]").setValue("John James O'Grady");
         form.$("[type=tel]").setValue("+79999999999");
         form.$("[data-test-id] [class=checkbox__box]").click();
@@ -26,8 +31,7 @@ public class FormSendTest {
 
     @Test
     void shouldSendRightData(){
-        open("http://localhost:9999");
-        SelenideElement form =$("div[class=App_appContainer__3jRx1]");
+        SelenideElement form =$("#root");
         form.$("[type=text]").setValue("Наина Иосифовна Ельцина");
         form.$("[type=tel]").setValue("+79999999999");
         form.$("[data-test-id] [class=checkbox__box]").click();
@@ -39,9 +43,8 @@ public class FormSendTest {
     }
 
     @Test
-    void shouldNotSendWrongNumber(){
-        open("http://localhost:9999");
-        SelenideElement form =$("div[class=App_appContainer__3jRx1]");
+    void shouldNotValidateWrongNumber(){
+        SelenideElement form =$("#root");
         form.$("[type=text]").setValue("Борис Николаевич Ельцин");
         form.$("[type=tel]").setValue("88888888888");
         form.$("[data-test-id] [class=checkbox__box]").click();
@@ -53,8 +56,7 @@ public class FormSendTest {
 
     @Test
     void shouldNotSendWithUncheckedBox(){
-        open("http://localhost:9999");
-        SelenideElement form =$("div[class=App_appContainer__3jRx1]");
+        SelenideElement form =$("#root");
         form.$("[type=text]").setValue("Борис Николаевич Ельцин");
         form.$("[type=tel]").setValue("+79999999999");
         form.$("[role=button]").click();
@@ -63,5 +65,27 @@ public class FormSendTest {
 
     }
 
+    @Test
+    void shouldNotValidateEmptyName(){
+        SelenideElement form =$("#root");
+        form.$("[type=text]").setValue(null);
+        form.$("[type=tel]").setValue("+79999999999");
+        form.$("[data-test-id] [class=checkbox__box]").click();
+        form.$("[role=button]").click();
+        form.$("span[data-test-id=name] [class=input__sub]")
+                .shouldHave(exactText("Поле обязательно для заполнения"));
+    }
+
+    @Test
+    void shouldNotValidateEmptyNumber(){
+        SelenideElement form =$("#root");
+        form.$("[type=text]").setValue("Борис Николаевич Ельцин");
+        form.$("[type=tel]").setValue(null);
+        form.$("[data-test-id] [class=checkbox__box]").click();
+        form.$("[role=button]").click();
+        $("[data-test-id=phone] [class=input__sub]")
+                .shouldHave(exactText("Поле обязательно для заполнения"));
+
+    }
 
 }
